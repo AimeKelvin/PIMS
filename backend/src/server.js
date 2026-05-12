@@ -3,6 +3,9 @@ import cors from "cors";
 import session from "express-session";
 import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
+import medicineRoutes from "./routes/medicineRoutes.js";
+import categoryRoutes from "./routes/categoryRoutes.js";
+import stockRoutes from "./routes/stockRoutes.js"
 
 dotenv.config();
 
@@ -35,6 +38,9 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api", authRoutes);
+app.use("/api", medicineRoutes);
+app.use("/api", categoryRoutes)
+app.use("/api", stockRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
