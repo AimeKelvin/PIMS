@@ -1,9 +1,14 @@
-import Router from "express"
-import {AddInventoryRecord,checkInventory } from "../controllers/stockController.js"
+import express from "express";
 
-let router = Router()
+import {
+  getAllInventory,
+  addInventory,
+} from "../controllers/stockController.js";
 
-router.post("/stock", AddInventoryRecord)
-router.get("/stock",checkInventory )
+const router = express.Router();
 
-export default router
+router.get("/stock", getAllInventory);
+
+router.post("/stock", addInventory);
+
+export default router;
