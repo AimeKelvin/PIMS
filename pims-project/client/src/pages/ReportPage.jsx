@@ -3,23 +3,41 @@ import { useEffect, useState } from "react";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
-const REPORT_API = "http://localhost:1434/reports/daily";
+const DAILY_REPORT_API = "http://localhost:1434/reports/daily";
+const RANGE_REPORT_API = "http://localhost:1434/reports/range";
 
 export default function ReportsPage() {
+  const today = new Date().toISOString().split("T")[0];
+
   const [reports, setReports] = useState([]);
   const [message, setMessage] = useState("");
 
-  const [selectedDate, setSelectedDate] = useState(
-    new Date().toISOString().split("T")[0]
-  );
+  const [selectedDate, setSelectedDate] = useState(today);
+  const [startDate, setStartDate] = useState(today);
+  const [endDate, setEndDate] = useState(today);
+
+  const [reportMode, setReportMode] = useState("daily");
 
   const loadReports = async () => {
     try {
-      const res = await fetch(
-        `${REPORT_API}?date=${selectedDate}`
-      );
+      setMessage("");
 
+      let url = "";
+
+      if (reportMode === "daily") {
+        url = `${DAILY_REPORT_API}?date=${selectedDate}`;
+      } else {
+        url = `${RANGE_REPORT_API}?startDate=${startDate}&endDate=${endDate}`;
+      }
+
+      const res = await fetch(url);
       const data = await res.json();
+
+      if (!res.ok) {
+        setReports([]);
+        setMessage(data.message || "Failed to load reports");
+        return;
+      }
 
       setReports(data);
     } catch (err) {
@@ -30,15 +48,18 @@ export default function ReportsPage() {
 
   useEffect(() => {
     loadReports();
-  }, [selectedDate]);
+  }, [selectedDate, startDate, endDate, reportMode]);
 
-  // EXPORT CSV
+  const getReportTitle = () => {
+    if (reportMode === "daily") {
+      return `Daily Sales Report - ${selectedDate}`;
+    }
+
+    return `Sales Report - ${startDate} to ${endDate}`;
+  };
+
   const exportCSV = () => {
-    const headers = [
-      "Trade Name",
-      "Quantity Sold",
-      "Remaining Stock",
-    ];
+    const headers = ["Trade Name", "Quantity Sold", "Remaining Stock"];
 
     const rows = reports.map((report) => [
       report.TradeName,
@@ -46,10 +67,9 @@ export default function ReportsPage() {
       report.RemainingStock,
     ]);
 
-    const csvContent = [
-      headers.join(","),
-      ...rows.map((row) => row.join(",")),
-    ].join("\n");
+    const csvContent = [headers.join(","), ...rows.map((row) => row.join(","))].join(
+      "\n"
+    );
 
     const blob = new Blob([csvContent], {
       type: "text/csv;charset=utf-8;",
@@ -58,23 +78,22 @@ export default function ReportsPage() {
     const link = document.createElement("a");
 
     link.href = URL.createObjectURL(blob);
-    link.download = `daily-report-${selectedDate}.csv`;
+    link.download =
+      reportMode === "daily"
+        ? `daily-report-${selectedDate}.csv`
+        : `range-report-${startDate}-to-${endDate}.csv`;
 
     link.click();
   };
 
-  // EXPORT PDF
   const exportPDF = () => {
     const doc = new jsPDF();
 
     doc.setFontSize(16);
-    doc.text("Daily Sales Report", 14, 20);
-
-    doc.setFontSize(11);
-    doc.text(`Date: ${selectedDate}`, 14, 28);
+    doc.text(getReportTitle(), 14, 20);
 
     autoTable(doc, {
-      startY: 35,
+      startY: 30,
       head: [["Trade Name", "Quantity Sold", "Remaining Stock"]],
       body: reports.map((report) => [
         report.TradeName,
@@ -83,7 +102,11 @@ export default function ReportsPage() {
       ]),
     });
 
-    doc.save(`daily-report-${selectedDate}.pdf`);
+    doc.save(
+      reportMode === "daily"
+        ? `daily-report-${selectedDate}.pdf`
+        : `range-report-${startDate}-to-${endDate}.pdf`
+    );
   };
 
   return (
@@ -91,24 +114,59 @@ export default function ReportsPage() {
       <section>
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-xl font-bold text-blue-500">
-            Daily Sales Report
+            {reportMode === "daily" ? "Daily Sales Report" : "Sales Report Range"}
           </h2>
 
-          <div className="flex items-center gap-2">
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
+          <div className="flex flex-wrap items-center gap-2">
+            <select
+              value={reportMode}
+              onChange={(e) => setReportMode(e.target.value)}
               className="border border-gray-300 px-4 py-2 outline-none"
-            />
+            >
+              <option value="daily">Single Day</option>
+              <option value="range">Date Range</option>
+            </select>
+
+            {reportMode === "daily" ? (
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="border border-gray-300 px-4 py-2 outline-none"
+              />
+            ) : (
+              <>
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  className="border border-gray-300 px-4 py-2 outline-none"
+                />
+
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  className="border border-gray-300 px-4 py-2 outline-none"
+                />
+              </>
+            )}
 
             <button
               onClick={exportCSV}
-              className="rounded bg-green-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-green-700"
+              disabled={reports.length === 0}
+              className="rounded bg-green-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-400"
             >
               Export CSV
             </button>
 
+            <button
+              onClick={exportPDF}
+              disabled={reports.length === 0}
+              className="rounded bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:bg-gray-400"
+            >
+              Export PDF
+            </button>
           </div>
         </div>
 
@@ -122,36 +180,39 @@ export default function ReportsPage() {
           <table className="w-full border-collapse">
             <thead>
               <tr>
-                <th className="border border-gray-300 px-4 py-2">
-                  Trade Name
-                </th>
-
-                <th className="border border-gray-300 px-4 py-2">
-                  Quantity Sold
-                </th>
-
-                <th className="border border-gray-300 px-4 py-2">
-                  Remaining Stock
-                </th>
+                <th className="border border-gray-300 px-4 py-2">Trade Name</th>
+                <th className="border border-gray-300 px-4 py-2">Quantity Sold</th>
+                <th className="border border-gray-300 px-4 py-2">Remaining Stock</th>
               </tr>
             </thead>
 
             <tbody>
-              {reports.map((report, index) => (
-                <tr key={index}>
-                  <td className="border border-gray-300 px-4 py-2 text-center">
-                    {report.TradeName}
-                  </td>
+              {reports.length > 0 ? (
+                reports.map((report, index) => (
+                  <tr key={index}>
+                    <td className="border border-gray-300 px-4 py-2 text-center">
+                      {report.TradeName}
+                    </td>
 
-                  <td className="border border-gray-300 px-4 py-2 text-center">
-                    {report.QuantitySold}
-                  </td>
+                    <td className="border border-gray-300 px-4 py-2 text-center">
+                      {report.QuantitySold}
+                    </td>
 
-                  <td className="border border-gray-300 px-4 py-2 text-center">
-                    {report.RemainingStock}
+                    <td className="border border-gray-300 px-4 py-2 text-center">
+                      {report.RemainingStock}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan="3"
+                    className="border border-gray-300 px-4 py-6 text-center text-gray-500"
+                  >
+                    No report data found
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
