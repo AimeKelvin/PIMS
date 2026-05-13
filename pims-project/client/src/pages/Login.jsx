@@ -57,13 +57,7 @@ export default function Login() {
         flexDirection: "column",
         gap: "14px"
       }}>
-        <p style={{
-          color: "#2563EB",
-          fontWeight: "700",
-          margin: 0
-        }}>
-          Create Parachute
-        </p>
+       
 
         <h1 style={{
           margin: 0,
@@ -77,7 +71,7 @@ export default function Login() {
           marginTop: 0,
           lineHeight: "1.5"
         }}>
-          Use a username and password. Passwords are hashed in the backend.
+          Koresha username and passsword
         </p>
 
         <input

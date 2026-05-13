@@ -143,7 +143,11 @@ export default function Medicines() {
                 </td>
 
                 <td className="border border-gray-300 px-4 py-2 text-center">
-                  {medicine.CategoryName || medicine.CategoryID}
+                  {
+  categories.find(
+    (category) => category.CategoryID === medicine.CategoryID
+  )?.CategoryName || medicine.CategoryID
+}
                 </td>
 
                 <td className="border border-gray-300 px-4 py-2 text-center">

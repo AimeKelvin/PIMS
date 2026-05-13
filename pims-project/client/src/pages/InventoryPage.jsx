@@ -105,7 +105,11 @@ export default function Inventory() {
                 </td>
 
                 <td className="border border-gray-300 px-4 py-2 text-center">
-                  {item.TradeName || item.MedicineID}
+                  {
+  medicines.find(
+    (medicine) => medicine.MedicineID === item.MedicineID
+  )?.TradeName || item.MedicineID
+}
                 </td>
 
                 <td className="border border-gray-300 px-4 py-2 text-center">
