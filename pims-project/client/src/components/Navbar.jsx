@@ -25,13 +25,6 @@ export default function Navbar() {
         to="/"
         className="text-sm font-medium text-gray-700 transition hover:text-blue-600"
       >
-        Dashboard
-      </Link>
-
-      <Link
-        to="/category"
-        className="text-sm font-medium text-gray-700 transition hover:text-blue-600"
-      >
         Categories
       </Link>
 
@@ -61,6 +54,13 @@ export default function Navbar() {
         className="text-sm font-medium text-gray-700 transition hover:text-blue-600"
       >
         Bills
+      </Link>
+
+       <Link
+        to="/report"
+        className="text-sm font-medium text-gray-700 transition hover:text-blue-600"
+      >
+        Reports
       </Link>
 
       <span className="ml-auto text-sm text-gray-500">

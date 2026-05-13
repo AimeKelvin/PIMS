@@ -9,6 +9,7 @@ import Medicines from "../pages/MedicinesPage";
 import Inventory from "../pages/InventoryPage";
 import Sales from "../pages/SalesPage";
 import BillsPage from "../pages/BillsPage";
+import ReportPage from "../pages/ReportPage.jsx";
 
 export default function Router() {
   return (
@@ -16,13 +17,8 @@ export default function Router() {
       <Routes>
         <Route path="/login" element={<Login />} />
 
-        <Route path="/" element={
-          <ProtectedRoute>
-            <Dashboard />
-          </ProtectedRoute>
-        } />
 
-        <Route path="/category" element={
+        <Route path="/" element={
           <ProtectedRoute>
             <Categories />
           </ProtectedRoute>
@@ -51,6 +47,13 @@ export default function Router() {
             <BillsPage />
           </ProtectedRoute>
         } />
+
+          <Route path="/report" element={
+          <ProtectedRoute>
+            <ReportPage />
+          </ProtectedRoute>
+        } />
+        
       </Routes>
     </BrowserRouter>
   );

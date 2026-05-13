@@ -1,34 +1,50 @@
 import DashboardLayout from "../layouts/DashboardLayout";
 import { useEffect, useState } from "react";
 
-const BILL_API = "http://localhost:1434/bills";
+const REPORT_API = "http://localhost:1434/reports/daily";
 
-function BillsPage() {
-  const [bills, setBills] = useState([]);
+export default function ReportsPage() {
+  const [reports, setReports] = useState([]);
   const [message, setMessage] = useState("");
 
-  const loadBills = async () => {
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
+
+  const loadReports = async () => {
     try {
-      const res = await fetch(BILL_API);
+      const res = await fetch(
+        `${REPORT_API}?date=${selectedDate}`
+      );
+
       const data = await res.json();
 
-      setBills(data);
+      setReports(data);
     } catch (err) {
       console.log(err);
-      setMessage("Failed to load bills");
+      setMessage("Failed to load reports");
     }
   };
 
   useEffect(() => {
-    loadBills();
-  }, []);
+    loadReports();
+  }, [selectedDate]);
 
   return (
     <DashboardLayout>
       <section>
-        <h2 className="mb-4 flex items-center justify-center p-2 text-xl font-bold text-blue-500">
-          Bills
-        </h2>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-xl font-bold text-blue-500">
+            Daily Sales Report
+          </h2>
+
+          <input
+            type="date"
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className="border border-gray-300 px-4 py-2 outline-none"
+          />
+        </div>
 
         {message && (
           <p className="mb-4 border border-gray-300 bg-white p-3 text-sm">
@@ -40,11 +56,7 @@ function BillsPage() {
           <thead>
             <tr>
               <th className="border border-gray-300 px-4 py-2">
-                Bill ID
-              </th>
-
-              <th className="border border-gray-300 px-4 py-2">
-                Medicine
+                Trade Name
               </th>
 
               <th className="border border-gray-300 px-4 py-2">
@@ -52,36 +64,24 @@ function BillsPage() {
               </th>
 
               <th className="border border-gray-300 px-4 py-2">
-                Total Amount
-              </th>
-
-              <th className="border border-gray-300 px-4 py-2">
-                Sale Date
+                Remaining Stock
               </th>
             </tr>
           </thead>
 
           <tbody>
-            {bills.map((bill) => (
-              <tr key={bill.SaleNumber}>
+            {reports.map((report, index) => (
+              <tr key={index}>
                 <td className="border border-gray-300 px-4 py-2 text-center">
-                  {bill.SaleNumber}
+                  {report.TradeName}
                 </td>
 
                 <td className="border border-gray-300 px-4 py-2 text-center">
-                  {bill.TradeName}
+                  {report.QuantitySold}
                 </td>
 
                 <td className="border border-gray-300 px-4 py-2 text-center">
-                  {bill.QuantitySold}
-                </td>
-
-                <td className="border border-gray-300 px-4 py-2 text-center">
-                  {bill.TotalAmount} RWF
-                </td>
-
-                <td className="border border-gray-300 px-4 py-2 text-center">
-                  {new Date(bill.SaleDate).toLocaleDateString()}
+                  {report.RemainingStock}
                 </td>
               </tr>
             ))}
@@ -91,5 +91,3 @@ function BillsPage() {
     </DashboardLayout>
   );
 }
-
-export default BillsPage;

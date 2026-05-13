@@ -7,7 +7,8 @@ import medicineRoutes from "./routes/medicineRoutes.js";
 import categoryRoutes from "./routes/categoryRoutes.js";
 import stockRoutes from "./routes/stockRoutes.js";
 import salesRoutes from "./routes/salesRoutes.js";
-
+import billRoutes from "./routes/billRoutes.js"
+import reportRoutes from "./routes/reportRoutes.js"
 
 dotenv.config();
 
@@ -35,6 +36,8 @@ app.use("/medicines", medicineRoutes);
 app.use("/categories", categoryRoutes);
 app.use("/stocks", stockRoutes);
 app.use("/sales", salesRoutes);
+app.use("/bills", billRoutes);
+app.use("/reports", reportRoutes);
 
 app.get("/", (req, res) => {
   res.json({ message: "Parachute backend running" });
