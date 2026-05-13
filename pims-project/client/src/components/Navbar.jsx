@@ -16,39 +16,60 @@ export default function Navbar() {
   };
 
   return (
-    <nav style={{
-      background: "white",
-      borderBottom: "1px solid #e5e7eb",
-      padding: "18px 32px",
-      display: "flex",
-      gap: "24px",
-      alignItems: "center"
-    }}>
-      <strong style={{ marginRight: "12px" }}>Parachute</strong>
+    <nav className="flex items-center gap-6 border-b border-gray-200 bg-white px-8 py-4">
+      <strong className="mr-2 text-xl font-bold text-gray-900">
+        PIMS
+      </strong>
 
-      <Link to="/">Dashboard</Link>
-      <Link to="/page1">Page 1</Link>
-      <Link to="/page2">Page 2</Link>
-      <Link to="/page3">Page 3</Link>
+      <Link
+        to="/"
+        className="text-sm font-medium text-gray-700 transition hover:text-blue-600"
+      >
+        Dashboard
+      </Link>
 
-      <span style={{
-        marginLeft: "auto",
-        color: "#6b7280",
-        fontSize: "14px"
-      }}>
+      <Link
+        to="/category"
+        className="text-sm font-medium text-gray-700 transition hover:text-blue-600"
+      >
+        Categories
+      </Link>
+
+      <Link
+        to="/medicine"
+        className="text-sm font-medium text-gray-700 transition hover:text-blue-600"
+      >
+        Medicines
+      </Link>
+
+      <Link
+        to="/inventory"
+        className="text-sm font-medium text-gray-700 transition hover:text-blue-600"
+      >
+        Inventory
+      </Link>
+
+      <Link
+        to="/sales"
+        className="text-sm font-medium text-gray-700 transition hover:text-blue-600"
+      >
+        Sales
+      </Link>
+
+      <Link
+        to="/bills"
+        className="text-sm font-medium text-gray-700 transition hover:text-blue-600"
+      >
+        Bills
+      </Link>
+
+      <span className="ml-auto text-sm text-gray-500">
         {user?.Username}
       </span>
 
       <button
         onClick={logout}
-        style={{
-          background: "#2563EB",
-          color: "white",
-          border: "none",
-          padding: "10px 16px",
-          borderRadius: "10px",
-          cursor: "pointer"
-        }}
+        className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-blue-700"
       >
         Logout
       </button>

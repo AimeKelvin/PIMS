@@ -1,6 +1,6 @@
 import DashboardLayout from "../layouts/DashboardLayout";
 
-export default function Page1() {
+export default function Categories() {
   return (
     <DashboardLayout>
       <section style={{

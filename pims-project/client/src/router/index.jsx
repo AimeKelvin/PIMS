@@ -4,9 +4,11 @@ import ProtectedRoute from "../components/ProtectedRoute";
 
 import Login from "../pages/Login";
 import Dashboard from "../pages/Dashboard";
-import Page1 from "../pages/Page1";
-import Page2 from "../pages/Page2";
-import Page3 from "../pages/Page3";
+import Categories from "../pages/CategoryPage";
+import Medicines from "../pages/MedicinesPage";
+import Inventory from "../pages/InventoryPage";
+import Sales from "../pages/SalesPage";
+import BillsPage from "../pages/BillsPage";
 
 export default function Router() {
   return (
@@ -20,21 +22,33 @@ export default function Router() {
           </ProtectedRoute>
         } />
 
-        <Route path="/page1" element={
+        <Route path="/category" element={
           <ProtectedRoute>
-            <Page1 />
+            <Categories />
           </ProtectedRoute>
         } />
 
-        <Route path="/page2" element={
+        <Route path="/medicine" element={
           <ProtectedRoute>
-            <Page2 />
+            <Medicines />
           </ProtectedRoute>
         } />
 
-        <Route path="/page3" element={
+        <Route path="/inventory" element={
           <ProtectedRoute>
-            <Page3 />
+            <Inventory />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/sales" element={
+          <ProtectedRoute>
+            <Sales />
+          </ProtectedRoute>
+        } />
+
+        <Route path="/bills" element={
+          <ProtectedRoute>
+            <BillsPage />
           </ProtectedRoute>
         } />
       </Routes>

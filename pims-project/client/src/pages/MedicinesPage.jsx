@@ -1,6 +1,6 @@
 import DashboardLayout from "../layouts/DashboardLayout";
 
-export default function Page3() {
+export default function Medicines() {
   return (
     <DashboardLayout>
       <section style={{
@@ -22,7 +22,7 @@ export default function Page3() {
           fontSize: "32px",
           marginBottom: "12px"
         }}>
-          Welcome to Page 3
+          Welcome to Page 2
         </h1>
 
         <p style={{
